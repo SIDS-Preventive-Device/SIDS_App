@@ -1,12 +1,69 @@
+import 'package:code_grav_app/ble/device_connector.dart';
+import 'package:code_grav_app/ble/device_interactor.dart';
+import 'package:code_grav_app/ble/logger.dart';
+import 'package:code_grav_app/ble/monitor.dart';
+import 'package:code_grav_app/ble/scanner.dart';
 import 'package:code_grav_app/calibration.dart';
 import 'package:code_grav_app/home.dart';
 import 'package:code_grav_app/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final bleLogger = BleLogger();
+  final ble = FlutterReactiveBle();
+  final scanner = BleScanner(ble: ble, logMessage: bleLogger.addToLog);
+  final monitor = BleStatusMonitor(ble);
+  final connector = BleDeviceConnector(
+    ble: ble,
+    logMessage: bleLogger.addToLog,
+  );
+  final serviceDiscoverer = BleDeviceInteractor(
+    bleDiscoverServices: ble.discoverServices,
+    readCharacteristic: ble.readCharacteristic,
+    writeWithResponse: ble.writeCharacteristicWithResponse,
+    writeWithOutResponse: ble.writeCharacteristicWithoutResponse,
+    subscribeToCharacteristic: ble.subscribeToCharacteristic,
+    logMessage: bleLogger.addToLog,
+  );
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider.value(value: scanner),
+        Provider.value(value: monitor),
+        Provider.value(value: connector),
+        Provider.value(value: serviceDiscoverer),
+        Provider.value(value: bleLogger),
+        StreamProvider<BleScannerState?>(
+          create: (_) => scanner.state,
+          initialData: const BleScannerState(
+            discoveredDevices: [],
+            scanIsInProgress: false,
+          ),
+        ),
+        StreamProvider<BleStatus?>(
+          create: (_) => monitor.state,
+          initialData: BleStatus.unknown,
+        ),
+        StreamProvider<ConnectionStateUpdate>(
+          create: (_) => connector.state,
+          initialData: const ConnectionStateUpdate(
+            deviceId: 'Unknown device',
+            connectionState: DeviceConnectionState.disconnected,
+            failure: null,
+          ),
+        ),
+      ],
+      child: const CodeGravApp(),
+    ),
+  );
+}
+
+class CodeGravApp extends StatelessWidget {
+  const CodeGravApp({Key? key}) : super(key: key);
 
   static const String _title = 'CodeGrav App v0.0.1';
 
@@ -14,19 +71,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: _title,
-      home: MyStatefulWidget(),
+      home: ApplicationNavWidget(),
     );
   }
 }
 
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({Key? key}) : super(key: key);
+class ApplicationNavWidget extends StatefulWidget {
+  const ApplicationNavWidget({Key? key}) : super(key: key);
 
   @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
+  State<ApplicationNavWidget> createState() => ApplicationNavWidgetState();
 }
 
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+class ApplicationNavWidgetState extends State<ApplicationNavWidget> {
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
@@ -45,7 +102,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(MyApp._title),
+        title: const Text(CodeGravApp._title),
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
