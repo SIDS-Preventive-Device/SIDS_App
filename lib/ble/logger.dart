@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:intl/intl.dart';
 
 class BleLogger {
@@ -8,7 +10,7 @@ class BleLogger {
 
   void addToLog(String message) {
     final now = DateTime.now();
-    _logMessages.add('${formatter.format(now)} - $message');
+    log('${formatter.format(now)} - $message');
   }
 
   void clearLogs() => _logMessages.clear();

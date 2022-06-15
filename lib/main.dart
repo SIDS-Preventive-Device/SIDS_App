@@ -65,7 +65,7 @@ void main() {
 class CodeGravApp extends StatelessWidget {
   const CodeGravApp({Key? key}) : super(key: key);
 
-  static const String _title = 'CodeGrav App v0.0.1';
+  static const String _title = 'CodeGrav App v0.1.1';
 
   @override
   Widget build(BuildContext context) {
@@ -84,51 +84,14 @@ class ApplicationNavWidget extends StatefulWidget {
 }
 
 class ApplicationNavWidgetState extends State<ApplicationNavWidget> {
-  int _selectedIndex = 0;
-
-  static const List<Widget> _widgetOptions = <Widget>[
-    HomeWidget(),
-    CalibrationWidget(),
-    SettingsWidget()
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(CodeGravApp._title),
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            backgroundColor: Colors.red,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.refresh),
-            label: 'Calibration',
-            backgroundColor: Colors.green,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-            backgroundColor: Colors.purple,
-          )
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
-    );
+        appBar: AppBar(
+          title: const Text(CodeGravApp._title),
+        ),
+        body: const Center(
+          child: HomeWidget(),
+        ));
   }
 }
