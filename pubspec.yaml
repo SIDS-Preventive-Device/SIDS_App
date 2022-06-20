@@ -39,6 +39,7 @@ dependencies:
   intl: ^0.17.0
   provider: ^6.0.3
   functional_data: ^1.0.0
+  flutter_platform_alert: ^0.2.7
 
 dev_dependencies:
   flutter_test:

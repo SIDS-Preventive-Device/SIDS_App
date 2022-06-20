@@ -1,10 +1,14 @@
 import 'dart:math';
+import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cube/flutter_cube.dart';
 
 class Device3DWidget extends StatefulWidget {
-  const Device3DWidget({Key? key}) : super(key: key);
+  const Device3DWidget({required this.rotationStream, Key? key})
+      : super(key: key);
+
+  final Stream<Vector3> rotationStream;
 
   @override
   Device3DWidgetState createState() => Device3DWidgetState();
@@ -18,6 +22,7 @@ class Device3DWidgetState extends State<Device3DWidget>
   final double _ambient = 0.1;
   final double _diffuse = 0.8;
   final double _specular = 0.5;
+  Vector3 rotation = Vector3.zero();
 
   void _onSceneCreated(Scene scene) {
     _scene = scene;
@@ -35,11 +40,17 @@ class Device3DWidgetState extends State<Device3DWidget>
   @override
   void initState() {
     super.initState();
+    widget.rotationStream.listen((event) {
+      rotation = event;
+    });
     _controller = AnimationController(
         duration: const Duration(milliseconds: 30000), vsync: this)
       ..addListener(() {
         if (_bunny != null) {
-          _bunny!.rotation.y = _controller.value * 360;
+          _bunny!.rotation.x = rotation.x;
+          _bunny!.rotation.y = rotation.z;
+          _bunny!.rotation.z = rotation.y;
+
           _bunny!.updateTransform();
           _scene.update();
         }

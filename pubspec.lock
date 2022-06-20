@@ -83,6 +83,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  flutter_platform_alert:
+    dependency: "direct main"
+    description:
+      name: flutter_platform_alert
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.7"
   flutter_reactive_ble:
     dependency: "direct main"
     description:

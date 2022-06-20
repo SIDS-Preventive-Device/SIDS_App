@@ -65,7 +65,7 @@ void main() {
 class CodeGravApp extends StatelessWidget {
   const CodeGravApp({Key? key}) : super(key: key);
 
-  static const String _title = 'CodeGrav App v0.1.1';
+  static const String _title = 'CodeGrav App v0.1.4';
 
   @override
   Widget build(BuildContext context) {
